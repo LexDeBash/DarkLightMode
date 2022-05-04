@@ -11,6 +11,26 @@ class ListViewController: UITableViewController {
 
     private let cellID = "listCell"
     
+    private lazy var customSwitch: UISwitch = {
+        let uiSwitch = UISwitch()
+        uiSwitch.isOn = true
+        uiSwitch.addTarget(self, action: #selector(changeScreenMode), for: .valueChanged)
+        uiSwitch.onTintColor = UIColor.white
+        uiSwitch.backgroundColor = .darkGray
+        uiSwitch.layer.cornerRadius = 16
+        uiSwitch.thumbTintColor = .systemYellow
+        return uiSwitch
+    }()
+    
+    private lazy var darkModeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Dark Mode"
+        label.textColor = .white
+        label.font = UIFont.systemFont(ofSize: 16)
+        label.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        return label
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: cellID)
@@ -18,64 +38,38 @@ class ListViewController: UITableViewController {
         tableView.separatorColor = .darkGray
         
         setupNavigationBar()
-        setupCustomSwitch()
     }
     
 // MARK: - Setup NavBar
     private func setupNavigationBar() {
         title = "To Do List"
         navigationController?.navigationBar.prefersLargeTitles = true
-        
        
-        let navBarAppearence = UINavigationBarAppearance()
-        navBarAppearence.configureWithOpaqueBackground()
-        navBarAppearence.titleTextAttributes = [.foregroundColor: UIColor.white]
-        navBarAppearence.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.configureWithOpaqueBackground()
+        navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
         
-        navBarAppearence.backgroundColor = .lightGray
+        navBarAppearance.backgroundColor = .lightGray
         
-        navigationController?.navigationBar.standardAppearance = navBarAppearence
-        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearence
-        
-    }
-
-//MARK: - Setup Custom Switch
-    private func setupCustomSwitch() {
-        
-        let customSwitch = UISwitch()
-        customSwitch.isOn = true
-        customSwitch.addTarget(self, action: #selector(changeScreenMode), for: .valueChanged)
-        customSwitch.onTintColor = UIColor.white
-        customSwitch.backgroundColor = .darkGray
-        customSwitch.layer.cornerRadius = 16
-        customSwitch.layer.masksToBounds = true
-        customSwitch.thumbTintColor = .systemYellow
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         
         let navBarSwitch = UIBarButtonItem(customView: customSwitch)
-        
-        let darkModeLabel = UILabel()
-        darkModeLabel.text = "Dark Mode"
-        darkModeLabel.textColor = .white
-        darkModeLabel.font = UIFont.systemFont(ofSize: 16)
-        darkModeLabel.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        
-        
-        let navModeLabel = UIBarButtonItem(customView: darkModeLabel)
-        navigationItem.leftBarButtonItems = [navBarSwitch, navModeLabel]
+        let navBarLabel = UIBarButtonItem(customView: darkModeLabel)
+        navigationItem.leftBarButtonItems = [navBarSwitch, navBarLabel]
     }
     
     @objc private func changeScreenMode(sender: UISwitch) {
-        guard let label = navigationItem.leftBarButtonItems?.last?.customView as? UILabel else { return }
-        
         if sender.isOn {
-            label.text = "Dark Mode"
+            darkModeLabel.text = "Dark Mode"
             view.backgroundColor = .white
             tableView.separatorColor = .darkGray
             tableView.reloadData()
         } else {
             view.backgroundColor = .darkGray
             tableView.separatorColor = .white
-            label.text = "Light Mode"
+            darkModeLabel.text = "Light Mode"
             tableView.reloadData()
         }
     }
